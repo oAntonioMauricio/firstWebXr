@@ -28,9 +28,10 @@
             init: function () {
                 var el = this.el;
                 var previousAcceleration = { x: 0, y: 0, z: 0 };
+                var movementDetected = false; // Flag to track if movement is detected
 
                 // Threshold for detecting movement
-                var movementThreshold = 0.1;
+                var movementThreshold = 0.5; // Adjust this value as needed
 
                 window.addEventListener('devicemotion', function (event) {
                     var acceleration = event.accelerationIncludingGravity;
@@ -44,6 +45,15 @@
 
                     // Compare with previous acceleration
                     if (accelerationMagnitude > movementThreshold) {
+                        movementDetected = true;
+                    }
+
+                    previousAcceleration = acceleration;
+                });
+
+                // Check for movement every frame
+                el.sceneEl.addEventListener('tick', function () {
+                    if (movementDetected) {
                         var camera = el.sceneEl.camera.el;
                         var currentPosition = camera.getAttribute('position');
 
@@ -53,9 +63,10 @@
                             y: currentPosition.y,
                             z: currentPosition.z - 0.05  // Adjust this value as needed
                         });
-                    }
 
-                    previousAcceleration = acceleration;
+                        // Reset the flag
+                        movementDetected = false;
+                    }
                 });
             }
         });
