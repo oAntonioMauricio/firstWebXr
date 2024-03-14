@@ -27,10 +27,10 @@
         AFRAME.registerComponent('physical-movement', {
             init: function () {
                 var el = this.el;
-                var isMoving = false; // Flag to track movement
-
-                // Threshold for detecting movement
-                var movementThreshold = 0.1; // Adjust this value as needed
+                var camera = el.sceneEl.camera.el;
+                var previousAcceleration = { x: 0, y: 0, z: 0 };
+                var movementThreshold = 0.5; // Adjust this value as needed
+                var accelerationSum = 0;
 
                 window.addEventListener('devicemotion', function (event) {
                     var acceleration = event.accelerationIncludingGravity;
@@ -42,16 +42,23 @@
                         Math.pow(acceleration.z, 2)
                     );
 
-                    // Check if acceleration exceeds threshold
-                    if (accelerationMagnitude > movementThreshold) {
-                        isMoving = true;
-                    }
+                    // Calculate the change in acceleration
+                    var accelerationChange = Math.abs(accelerationMagnitude - Math.sqrt(
+                        Math.pow(previousAcceleration.x, 2) +
+                        Math.pow(previousAcceleration.y, 2) +
+                        Math.pow(previousAcceleration.z, 2)
+                    ));
+
+                    // Update previous acceleration
+                    previousAcceleration = acceleration;
+
+                    // Accumulate acceleration changes
+                    accelerationSum += accelerationChange;
                 });
 
-                // Move the camera forward if moving
+                // Move the camera forward if the accumulated acceleration changes exceed the threshold
                 el.sceneEl.addEventListener('tick', function () {
-                    if (isMoving) {
-                        var camera = el.sceneEl.camera.el;
+                    if (accelerationSum > movementThreshold) {
                         var currentPosition = camera.getAttribute('position');
 
                         // Move the camera forward
@@ -60,6 +67,9 @@
                             y: currentPosition.y,
                             z: currentPosition.z - 0.05 // Adjust this value as needed
                         });
+
+                        // Reset the accumulated acceleration changes
+                        accelerationSum = 0;
                     }
                 });
             }
