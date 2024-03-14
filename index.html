@@ -23,6 +23,42 @@
                 document.getElementById('movementFeedback').setAttribute('text', 'value', positionText);
             }
         });
+
+        AFRAME.registerComponent('physical-movement', {
+            init: function () {
+                var el = this.el;
+                var previousAcceleration = { x: 0, y: 0, z: 0 };
+
+                // Threshold for detecting movement
+                var movementThreshold = 0.1;
+
+                window.addEventListener('devicemotion', function (event) {
+                    var acceleration = event.accelerationIncludingGravity;
+
+                    // Calculate the magnitude of acceleration
+                    var accelerationMagnitude = Math.sqrt(
+                        Math.pow(acceleration.x, 2) +
+                        Math.pow(acceleration.y, 2) +
+                        Math.pow(acceleration.z, 2)
+                    );
+
+                    // Compare with previous acceleration
+                    if (accelerationMagnitude > movementThreshold) {
+                        var camera = el.sceneEl.camera.el;
+                        var currentPosition = camera.getAttribute('position');
+
+                        // Move the camera forward based on physical movement
+                        camera.setAttribute('position', {
+                            x: currentPosition.x,
+                            y: currentPosition.y,
+                            z: currentPosition.z - 0.05  // Adjust this value as needed
+                        });
+                    }
+
+                    previousAcceleration = acceleration;
+                });
+            }
+        });
     </script>
 
 </head>
@@ -30,7 +66,7 @@
 <body>
     <a-scene vr-mode-ui="enabled: false" cursor="rayOrigin: mouse">
         <!-- Camera with controls -->
-        <a-entity id="cameraRig" position="0 1.6 0" position-feedback>
+        <a-entity id="cameraRig" position="0 1.6 0" position-feedback physical-movement>
             <!-- Desktop keyboard controls -->
             <a-camera wasd-controls look-controls></a-camera>
 
