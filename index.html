@@ -27,11 +27,10 @@
         AFRAME.registerComponent('physical-movement', {
             init: function () {
                 var el = this.el;
-                var previousAcceleration = { x: 0, y: 0, z: 0 };
-                var movementDetected = false; // Flag to track if movement is detected
+                var isMoving = false; // Flag to track movement
 
                 // Threshold for detecting movement
-                var movementThreshold = 0.5; // Adjust this value as needed
+                var movementThreshold = 0.1; // Adjust this value as needed
 
                 window.addEventListener('devicemotion', function (event) {
                     var acceleration = event.accelerationIncludingGravity;
@@ -43,29 +42,24 @@
                         Math.pow(acceleration.z, 2)
                     );
 
-                    // Compare with previous acceleration
+                    // Check if acceleration exceeds threshold
                     if (accelerationMagnitude > movementThreshold) {
-                        movementDetected = true;
+                        isMoving = true;
                     }
-
-                    previousAcceleration = acceleration;
                 });
 
-                // Check for movement every frame
+                // Move the camera forward if moving
                 el.sceneEl.addEventListener('tick', function () {
-                    if (movementDetected) {
+                    if (isMoving) {
                         var camera = el.sceneEl.camera.el;
                         var currentPosition = camera.getAttribute('position');
 
-                        // Move the camera forward based on physical movement
+                        // Move the camera forward
                         camera.setAttribute('position', {
                             x: currentPosition.x,
                             y: currentPosition.y,
-                            z: currentPosition.z - 0.05  // Adjust this value as needed
+                            z: currentPosition.z - 0.05 // Adjust this value as needed
                         });
-
-                        // Reset the flag
-                        movementDetected = false;
                     }
                 });
             }
