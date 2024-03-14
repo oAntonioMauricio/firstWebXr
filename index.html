@@ -9,19 +9,37 @@
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script
         src="https://raw.githack.com/aframevr/aframe/master/dist/aframe-device-orientation-controls.min.js"></script>
+
+    <script>
+        AFRAME.registerComponent('position-feedback', {
+            tick: function () {
+                var cameraPosition;
+                if (this.el.sceneEl.is('vr-mode') || this.el.sceneEl.is('ar-mode')) {
+                    cameraPosition = this.el.sceneEl.camera.el.getAttribute('position');
+                } else {
+                    cameraPosition = document.getElementById('mobileCamera').getAttribute('position');
+                }
+                var positionText = 'Position: ' + cameraPosition.x.toFixed(2) + ' ' + cameraPosition.y.toFixed(2) + ' ' + cameraPosition.z.toFixed(2);
+                document.getElementById('movementFeedback').setAttribute('text', 'value', positionText);
+            }
+        });
+    </script>
+
 </head>
 
 <body>
     <a-scene vr-mode-ui="enabled: false" cursor="rayOrigin: mouse">
-
         <!-- Camera with controls -->
-        <a-entity id="cameraRig" position="0 1.6 0">
+        <a-entity id="cameraRig" position="0 1.6 0" position-feedback>
             <!-- Desktop keyboard controls -->
             <a-camera wasd-controls look-controls></a-camera>
 
             <!-- Mobile device orientation controls -->
-            <a-camera device-orientation-controls movement-controls></a-camera>
+            <a-camera id="mobileCamera" device-orientation-controls movement-controls></a-camera>
         </a-entity>
+
+        <!-- Text to indicate movement -->
+        <a-entity id="movementFeedback" position="0 1.5 -2" text="value: Position: 0 1.6 0" scale="6 6 6"></a-entity>
 
         <!-- Your scene objects -->
         <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
