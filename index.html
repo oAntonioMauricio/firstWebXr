@@ -6,18 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model Viewer!</title>
     <link rel="stylesheet" href="styles.css">
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <!-- <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script> -->
 </head>
 
 <body>
 
-    <div class="container">
-        <model-viewer
-            alt="Small Tree"
-            src="assets/models/Tree.glb" ar shadow-intensity="1" camera-controls touch-action="pan-y">
+    <!-- <div class="container display-none">
+        <model-viewer alt="Small Tree" src="assets/models/Tree.glb" ar ar-placement="wall" shadow-intensity="1"
+            camera-controls touch-action="pan-y">
         </model-viewer>
+    </div> -->
+    <div id="mainContainer">
+        
     </div>
 
+    <button id="arbutton">View AR!</button>
+
+    <script src="scripts.js"></script>
 </body>
 
 </html>
