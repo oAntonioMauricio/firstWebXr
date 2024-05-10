@@ -2,6 +2,7 @@ console.log("Hello");
 
 let arButton = document.getElementById("arbutton");
 let mainContainer = document.getElementById("mainContainer");
+let logs = document.getElementById("logs");
 
 //
 let arLoaded = false;
@@ -32,25 +33,32 @@ function createModelViewer() {
     newAr.setAttribute("ar", "");
     newAr.setAttribute("camera-controls", "");
     newAr.setAttribute("touch-action", "pan-y");
+    newAr.setAttribute("ar-modes", "webxr quick-look");
 
     mainContainer.append(newAr);
     arButton.classList.add("display-none");
 
-    newAr.addEventListener("ar-status", (event) => {
-        if (event.detail.status === "not-presenting") {
-            console.log("not presenting");
-            alert("session started -> not presenting");
+   /*  logs.textContent = "A atualizar logs" */
+
+    /* newAr.addEventListener("ar-status", (event) => {
+        if (event.detail.status === "session-started") {
+            logs.textContent = "session-started";
             checkIfUserCanRunAr(newAr);
         }
+    }) */
+
+    newAr.addEventListener("load", () => {
+        logs.textContent = "can i run this?" + newAr.canActivateAR;
     })
 
     /* checkIfUserCanRunAr(newAr); */
 }
 
-function checkIfUserCanRunAr(ar) {
+/* function checkIfUserCanRunAr(ar) {
     console.log("Can use AR? " + ar.canActivateAR);
     if (!ar.canActivateAR) {
+        logs.textContent = "Infelizmente o seu dispositivo não permite";
         alert("Infelizmente o seu dispositivo não permite a visualização do equipamento em Realidade Aumentada");
     }
-}
+} */
 
