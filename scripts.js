@@ -32,11 +32,19 @@ function createModelViewer() {
     newAr.setAttribute("ar", "");
     newAr.setAttribute("camera-controls", "");
     newAr.setAttribute("touch-action", "pan-y");
-    mainContainer.append(newAr);
 
+    mainContainer.append(newAr);
     arButton.classList.add("display-none");
 
-    checkIfUserCanRunAr(newAr);
+    newAr.addEventListener("ar-status", (event) => {
+        if (event.detail.status === "not-presenting") {
+            console.log("not presenting");
+            alert("session started -> not presenting");
+            checkIfUserCanRunAr(newAr);
+        }
+    })
+
+    /* checkIfUserCanRunAr(newAr); */
 }
 
 function checkIfUserCanRunAr(ar) {
